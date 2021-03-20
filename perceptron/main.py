@@ -28,9 +28,8 @@ def neuron(input_data: np.array, w: np.array, bias: float):
     :param bias: float
     :return: float
     """
-    # TODO: Change neuron to calculate probability (input : nb_vowels / nb_chars in a word)
-    r = np.sum(input_data[0:2] * w) + bias
-    return 1 if r > 0.0 else 0
+    p = np.sum(input_data * w) + bias
+    return p
 
 
 def random_training():
@@ -41,7 +40,7 @@ def random_training():
     loss_function = np.array([])
     w1, w2 = np.array([]), np.array([])     # Initialize arrays
 
-    for i in range(10):
+    for i in range(100):
         errors = np.array([])
         weights = np.array([np.random.uniform(-1, 1), np.random.uniform(-1, 1)])    # Choose random weights
         bias = np.random.uniform(-1, 1)     # Choose random bias
