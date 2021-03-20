@@ -3,23 +3,10 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-
-DATASET = np.array([[2.7810836, 2.550537003],
-                    [1.465489372, 2.362125076],
-                    [3.396561688, 4.400293529],
-                    [1.38807019, 1.850220317],
-                    [3.06407232, 3.005305973],
-                    [7.627531214, 2.759262235],
-                    [5.332441248, 2.088626775],
-                    [6.922596716, 1.77106367],
-                    [8.675418651, -0.242068655],
-                    [7.673756466, 3.508563011]])
-EXPECTED_RESULTS = np.array([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
-WEIGHTS = np.array([-0.1, 0.20653640140000007])
-BIAS = -0.23418117710000003
+import training_data as train
 
 
-def neuron(input_data: np.array, w: np.array, bias: float):
+def neuron(input_data: np.array, w: np.array, bias: float) -> float:
     """
     A single neuron, calculating w1 * x + w2 * y + w3
 
@@ -32,41 +19,41 @@ def neuron(input_data: np.array, w: np.array, bias: float):
     return p
 
 
-def random_training():
+def random_training(dataset_length: int):
     """
     Train the neural network with randomly chosen weights and bias
+
     :return: Loss function and weights
     """
     loss_function = np.array([])
-    w1, w2 = np.array([]), np.array([])     # Initialize arrays
+    w1 = np.array([])     # Initialize arrays
+    dataset = train.generate_dataset(dataset_length)
 
-    for i in range(100):
+    for i in range(1000):
         errors = np.array([])
-        weights = np.array([np.random.uniform(-1, 1), np.random.uniform(-1, 1)])    # Choose random weights
-        bias = np.random.uniform(-1, 1)     # Choose random bias
+        weights = np.array([np.random.uniform(-10, 10), np.random.uniform(-10, 10)])    # Choose random weights
+        # bias = np.random.uniform(-10, 10)     # Choose random bias
+        bias = 0
 
-        for j in range(len(DATASET)):
-            res = neuron(DATASET[j], weights, bias)     # Calculate neuron return value with chosen weights and bias
-            error = (EXPECTED_RESULTS[j] - res) ** 2    # Calculate error
+        for d in dataset:
+            input_data = np.array([train.vowel_rate(d[0])])
+            res = neuron(input_data=input_data, w=weights, bias=bias)   # Calculate neuron return value with chosen weights and bias
+            error = (1 - res) ** 2 if d[1] == 1 else res ** 2    # Calculate error
             errors = np.append(errors, error)
 
         loss_function = np.append(loss_function, sum(errors) / len(errors))     # Calculate loss with these values
         w1 = np.append(w1, weights[0])
-        w2 = np.append(w2, weights[1])
 
-    return loss_function, w1, w2
+    return loss_function, w1
 
 
 if __name__ == "__main__":
     fig = plt.figure(tight_layout=True)
 
-    ax1 = fig.add_subplot(121)
-    ax2 = fig.add_subplot(122)
+    ax1 = fig.add_subplot(111)
 
-    loss, we1, we2 = random_training()
-    ax1.plot(we1, loss, 'bo', label="Weight 1")     # Plot results
-    ax2.plot(we2, loss, 'ro', label="Weight 2")
+    loss, we1 = random_training(200)
+    ax1.plot(we1, loss, 'bo', label="Loss function")     # Plot results
 
     ax1.legend()
-    ax2.legend()
     plt.show()

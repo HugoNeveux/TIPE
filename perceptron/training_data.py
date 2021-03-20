@@ -17,7 +17,7 @@ def random_word() -> str:
     return "".join(lst)
 
 
-def get_words_from_dict(n: int, path="data/francais-utf8.txt") -> list:
+def get_words_from_dict(n: int, path="../data/francais-utf8.txt") -> list:
     """
     Get a random array of n words from dictionary
 
