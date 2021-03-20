@@ -68,14 +68,12 @@ def gradient_descent(dataset: np.array, l_rate: float = 0.1):
         sum_error = 0.0
 
         for d in dataset:
-            print(d)
             res = neuron(d[0], weights, bias)
             error = d[1] - res
             sum_error += res ** 2
             bias = bias + l_rate * error
             for j in range(len(weights)):
                 weights[j] += l_rate * error * d[0][j]
-                print(l_rate * error * d[0][j])
 
         print(f'>>> Epoch {i}, error = {sum_error / len(dataset)}')
         tested_weights = np.append(tested_weights, tuple(weights))
@@ -84,14 +82,4 @@ def gradient_descent(dataset: np.array, l_rate: float = 0.1):
 
 
 if __name__ == "__main__":
-    """fig = plt.figure(tight_layout=True)
-
-    ax1 = fig.add_subplot(111)
-    
-    loss, we1 = random_training(200)
-    ax1.plot(we1, loss, 'bo', label="Loss function")  # Plot results
-
-    ax1.legend()
-    plt.show()"""
-
     print(gradient_descent(DATASET))
