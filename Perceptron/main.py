@@ -2,6 +2,7 @@
 # coding: utf8
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 DATASET = np.array([[2.7810836, 2.550537003],
                     [1.465489372, 2.362125076],
@@ -19,19 +20,54 @@ BIAS = -0.23418117710000003
 
 
 def neuron(input_data: np.array, w: np.array, bias: float):
+    """
+    A single neuron, calculating w1 * x + w2 * y + w3
+
+    :param input_data: np.array
+    :param w: np.array
+    :param bias: float
+    :return: float
+    """
+    # TODO: Change neuron to calculate probability (input : nb_vowels / nb_chars in a word)
     r = np.sum(input_data[0:2] * w) + bias
     return 1 if r > 0.0 else 0
 
 
-def gradient_descent():
-    res = np.array([])
-    weights = np.zeros(2)
-    bias = 0
-    for data in DATASET:
-        res = np.append(res, neuron(data, weights, bias))
-    error = sum(res - EXPECTED_RESULTS) / 10
-    r2 = error**2
+def random_training():
+    """
+    Train the neural network with randomly chosen weights and bias
+    :return: Loss function and weights
+    """
+    loss_function = np.array([])
+    w1, w2 = np.array([]), np.array([])     # Initialize arrays
+
+    for i in range(10):
+        errors = np.array([])
+        weights = np.array([np.random.uniform(-1, 1), np.random.uniform(-1, 1)])    # Choose random weights
+        bias = np.random.uniform(-1, 1)     # Choose random bias
+
+        for j in range(len(DATASET)):
+            res = neuron(DATASET[j], weights, bias)     # Calculate neuron return value with chosen weights and bias
+            error = (EXPECTED_RESULTS[j] - res) ** 2    # Calculate error
+            errors = np.append(errors, error)
+
+        loss_function = np.append(loss_function, sum(errors) / len(errors))     # Calculate loss with these values
+        w1 = np.append(w1, weights[0])
+        w2 = np.append(w2, weights[1])
+
+    return loss_function, w1, w2
 
 
 if __name__ == "__main__":
-    gradient_descent()
+    fig = plt.figure(tight_layout=True)
+
+    ax1 = fig.add_subplot(121)
+    ax2 = fig.add_subplot(122)
+
+    loss, we1, we2 = random_training()
+    ax1.plot(we1, loss, 'bo', label="Weight 1")     # Plot results
+    ax2.plot(we2, loss, 'ro', label="Weight 2")
+
+    ax1.legend()
+    ax2.legend()
+    plt.show()
