@@ -59,27 +59,46 @@ def random_training(dataset_length: int):
     return loss_function, w1
 
 
-def gradient_descent(dataset: np.array, l_rate: float = 0.1):
+def gradient_descent(dataset: np.array, l_rate: float = 0.1) -> tuple:
+    """
+    Gradient descent algorithm to train perceptron
+
+    :param dataset:
+    :param l_rate: float
+    :return: tuple
+    """
+
+    # Initializing variables
     weights = np.zeros(2)
-    tested_weights = np.array([])
+    tested_weights = [[], []]
     bias = 0
     loss_function = np.array([])
+
     for i in range(10):
         sum_error = 0.0
 
         for d in dataset:
             res = neuron(d[0], weights, bias)
             error = d[1] - res
-            sum_error += res ** 2
+            sum_error += error ** 2
             bias = bias + l_rate * error
             for j in range(len(weights)):
                 weights[j] += l_rate * error * d[0][j]
 
         print(f'>>> Epoch {i}, error = {sum_error / len(dataset)}')
-        tested_weights = np.append(tested_weights, tuple(weights))
+        for k in range(len(weights)):
+            tested_weights[k].append(weights[k])
         loss_function = np.append(loss_function, sum_error / len(dataset))
-    return weights, bias
+    return weights, bias, tested_weights, loss_function
 
 
 if __name__ == "__main__":
-    print(gradient_descent(DATASET))
+    fig = plt.figure(tight_layout=True)
+    ax1 = fig.add_subplot(111)
+
+    w, b, w_step, loss = gradient_descent(DATASET)
+    ax1.plot(loss, np.array(w_step[0]), 'bo')
+    ax1.plot(loss, np.array(w_step[1]), 'ro')
+    print(w)
+
+    plt.show()
